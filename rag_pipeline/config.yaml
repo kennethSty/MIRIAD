@@ -1,0 +1,36 @@
+# Embedding Configuration
+
+# Global settings
+world_size: 8  # Number of GPUs
+output_dir: 'embedding'
+
+# Model Configuration
+# model_name: 'sentence-transformers/all-MiniLM-L6-v2'
+# vector_size: 384
+model_name: 'BAAI/bge-large-en-v1.5'
+vector_size: 1024
+
+batch_size: 512
+
+# Dataset Configuration
+dataset_name: 'miriad/miriad-v0.1.1-5.8M-with-chunks' # 'miriad/miriad-v0.2-4.4M' or the prev one 'miriad/miriad-v0.1.1-5.8M-with-chunks'
+# Tokenization Configuration
+tokenization:
+  max_length: 512
+  stride: 64
+  force_retokenize: false
+tokenized_dataset_path: 'tokenized_dataset/tokenized_miriad_{model_name}_{content}_{max_length}_{stride}'
+
+# content selection
+content: 'qa' #'passage_text', 'qa', 'question', 'answer'
+
+# Qdrant Configuration
+upsert_to_qdrant: true
+qdrant_collection: 'miriad_{model_name}_{content}'
+qdrant_host: 'localhost'
+qdrant_port: 6333
+checkpoint_dir: 'upsert_checkpoints'
+upsert_batch_size: 1000
+check_if_point_exists: false
+resume: true
+overwrite: false

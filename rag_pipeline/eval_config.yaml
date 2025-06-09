@@ -1,0 +1,37 @@
+# Embedding Configuration
+embedding:
+  model_names: ['BAAI/bge-large-en-v1.5','sentence-transformers/all-MiniLM-L6-v2'] # 'sentence-transformers/all-MiniLM-L6-v2', 'BAAI/bge-large-en-v1.5'
+  contents: ['qa'] #['qa', 'passage_text'] #'passage_text', 'qa', 'question'
+  model_name: 'BAAI/bge-large-en-v1.5' # 'sentence-transformers/all-MiniLM-L6-v2', 'BAAI/bge-large-en-v1.5'
+  content: 'qa' #'passage_text', 'qa', 'question'
+
+# backbone llm Configuration
+llm:
+  llm_types: ['mistral', 'llama3'] # 'claude', 'mistral', 'llama3'
+  llm_type: 'mistral' # 'claude', 'mistral', 'llama3'
+  available_devices: [0,1,2,3,4,5,6,7] # [0,1,2,3,4,5,6,7] for 8 GPUs
+
+llm_claude:
+  model_name: 'claude-3-5-sonnet-20241022'
+
+llm_mistral:
+  model_name: 'mistralai/Mixtral-8x7B-Instruct-v0.1'
+  batch_size: 32
+  max_new_tokens: 1000
+  temperature: 0.0
+  load_in_8bit: False
+  max_length: 32768 # 32768 for Mixtral-8x7B-Instruct-v0.1
+
+llm_llama3:
+  model_name: 'meta-llama/Llama-3.1-8B-Instruct'
+  batch_size: 32
+  max_new_tokens: 1000
+  temperature: 0.0
+  load_in_8bit: False
+  max_length: 8192 # 8192 for Llama-3.1-8B-Instruct, original max position embedding
+
+# Qdrant Configuration
+qdrant:
+  host: 'localhost'
+  port: 6333 # e.g., 6333 for Qdrant
+  collection: 'miriad_{model_name}_{content}' # 'miriad_4.4M_{model_name}_{content}' or for 5.8M 'miriad_{model_name}_{content}'

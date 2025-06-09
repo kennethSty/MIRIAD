@@ -1,0 +1,82 @@
+cookie:
+  expiry_days: 0
+  key: NER4bYGeRwYLmIuZ
+  name: KexbRcIW
+credentials:
+  usernames:
+    '1':
+      name: user1
+      password: RCgzljnE
+    '10':
+      name: user10
+      password: THzNblZw
+    '11':
+      name: user11
+      password: XWxrpYXd
+    '12':
+      name: user12
+      password: xN6Og0ps
+    '13':
+      name: user13
+      password: w9EswwWH
+    '14':
+      name: user14
+      password: rwnlnqkm
+    '15':
+      name: user15
+      password: 4Z8yyPT8
+    '16':
+      name: user16
+      password: r5vMLHHj
+    '17':
+      name: user17
+      password: KPsTNnbU
+    '18':
+      name: user18
+      password: h8rOLdYg
+    '19':
+      name: user19
+      password: XVd9c6jX
+    '2':
+      name: user2
+      password: Vfjxf7nJ
+    '20':
+      name: user20
+      password: wR1AMXIq
+    '21':
+      name: user21
+      password: d50b0hCc
+    '22':
+      name: user22
+      password: Wx04oGyD
+    '23':
+      name: user23
+      password: hia2J76n
+    '24':
+      name: user24
+      password: qlJTbzAO
+    '25':
+      name: user25
+      password: IKO5IazX
+    '3':
+      name: user3
+      password: xMsguLXh
+    '4':
+      name: user4
+      password: saQC5Rml
+    '5':
+      name: user5
+      password: bSHnBJLR
+    '6':
+      name: user6
+      password: rWWS0qWc
+    '7':
+      name: user7
+      password: t71Lqbgu
+    '8':
+      name: user8
+      password: bUnxIgfL
+    '9':
+      name: user9
+      password: J1jKxjKh
+preauthorized: null
