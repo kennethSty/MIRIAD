@@ -4,6 +4,7 @@
   <a href="https://arxiv.org/pdf/2506.06091" target="_blank"><img src="https://img.shields.io/badge/arXiv-2506.06091-red"></a>
   <a href="https://med-miriad.github.io/" target="_blank"><img src="https://img.shields.io/badge/Project-Page-brightgreen"></a>
   <a href="https://huggingface.co/miriad" target="_blank"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-orange"></a>
+  <a href="https://med-miriad.github.io/demo/" target="_blank"><img src="https://img.shields.io/badge/MIRIAD%20Atlas-Demo-blue"></a>
 
 </p>
 
@@ -45,7 +46,7 @@
 - [RAG Pipeline](./rag_pipeline/): Code scripts used for RAG experiments, and medical hallucination detection experiments.
 - [Demo](./demo/): Demo notebook for a quick start, including simple Qdrant Retrieval pipeline with MIRIAD as the external corpus, RAG on MedMCQA with MIRIAD.
 - [Discipline Categorization](./discipline_categorization/): the final curated 56 disciplines within MIRIAD.
-- [MIRIAD Atlas](./atlas_vis/): [MIRIAD atlas demo](https://drive.google.com/file/d/1Lga6mxD6yTTi1gVDvtqRPlwnTtn8_hGD/view?usp=sharing) with 300k sample subset.
+- [MIRIAD Atlas Vis](https://med-miriad.github.io/demo/): Atlas demo with 300k MIRIAD subset.
 
 # System Requirements
 
