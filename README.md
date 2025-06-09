@@ -191,3 +191,20 @@ python run_evaluation.py
 
 #### Results
 To ensure better reproducibility, we provide a notebook at `rag_pipeline/log_results_checking.ipynb` for you to quickly checkout your own experiment results.
+
+
+## 📖 Citation
+
+Hope you find this project helpful! Kindly cite our paper at
+
+```bibtex
+@misc{zheng2025miriadaugmentingllmsmillions,
+      title={MIRIAD: Augmenting LLMs with millions of medical query-response pairs}, 
+      author={Qinyue Zheng and Salman Abdullah and Sam Rawal and Cyril Zakka and Sophie Ostmeier and Maximilian Purk and Eduardo Reis and Eric J. Topol and Jure Leskovec and Michael Moor},
+      year={2025},
+      eprint={2506.06091},
+      archivePrefix={arXiv},
+      primaryClass={cs.CL},
+      url={https://arxiv.org/abs/2506.06091}, 
+}
+```
