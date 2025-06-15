@@ -34,6 +34,19 @@
 - [Demo](#demo)
 - [Instruction for use](#instruction-for-use)
 
+### To load the dataset, run:
+```python
+from datasets import load_dataset
+
+dataset = load_dataset("miriad/miriad-5.8M", split="train") # for the 5.8M version
+```
+<!-- If you don't have access to the Huggingface dataset yet, no worries. We've prepared the dataset on [Google Drive](https://drive.google.com/file/d/1BPmHR83PvSEQIFlwkyblH0wb0eNRum8a/view?usp=sharing) for smooth access. We've also prepared an instruction on how to access the dataset vis Google drive in `demo/playbook.ipynb`. Feel free to download and try it out.  -->
+or 
+```python
+from datasets import load_dataset
+
+dataset = load_dataset("miriad/miriad-4.4M", split="train") # for the 4.4M version
+```
 
 # Overview
 
@@ -70,17 +83,6 @@ python3 -m venv env
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
-
-## MIRIAD Dataset Loading
-
-```bash
-from datasets import load_dataset
-
-dataset_name = 'miriad/miriad-5.8M'
-
-ds = load_dataset(dataset_name, split='train')
-```
-If you don't have access to the Huggingface dataset yet, no worries. We've prepared the dataset on [Google Drive](https://drive.google.com/file/d/1BPmHR83PvSEQIFlwkyblH0wb0eNRum8a/view?usp=sharing) for smooth access. We've also prepared an instruction on how to access the dataset vis Google drive in `demo/playbook.ipynb`. Feel free to download and try it out. 
 
 # Demo
 
