@@ -176,7 +176,7 @@ pip install -r requirements.txt
 - RAG Experiments on Hallucination Detection benchmark
 
 End to end pipeline:
-1. Embed MIRIAD dataset, and setup vector database for effecient storage and retrieval
+1. Embed MIRIAD dataset, and setup vector database for efficient storage and retrieval
     - Can do "qa", "passage_text", "question" only or "answer" only embeddings
     - Supports any huggingface embedding models, including sentenct-transformers, BAAI/bge etc.
 
