@@ -1,7 +1,7 @@
 <h2 align="center">MIRIAD: Augmenting LLMs with millions of medical query-response pairs</h2>
 
 <p align="center">
-  <a href="https://arxiv.org/pdf/2506.06091" target="_blank"><img src="https://img.shields.io/badge/arXiv-2506.06091-red"></a>
+  <a href="https://huggingface.co/papers/2506.06091" target="_blank"><img src="https://img.shields.io/badge/arXiv-2506.06091-red"></a>
   <a href="https://med-miriad.github.io/" target="_blank"><img src="https://img.shields.io/badge/Project-Page-brightgreen"></a>
   <a href="https://huggingface.co/miriad" target="_blank"><img src="https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Dataset-orange"></a>
   <a href="https://med-miriad.github.io/demo/" target="_blank"><img src="https://img.shields.io/badge/MIRIAD%20Atlas-Demo-blue"></a>
