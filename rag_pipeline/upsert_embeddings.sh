@@ -3,16 +3,16 @@
 CONFIG_FILE="config.yaml"
 
 # Define parameters
-EMBEDDING_DIR=$(yq '.output_dir' $CONFIG_FILE)
+EMBEDDING_DIR=$(yq -r '.output_dir' $CONFIG_FILE)
 echo "EMBEDDING_DIR: $EMBEDDING_DIR"
 # Extract MODEL_NAME and get the last element after splitting by '/'
-MODEL_NAME=$(yq '.model_name' $CONFIG_FILE | awk -F'/' '{print $NF}')  # MODEL_NAME="all-MiniLM-L6-v2"
+MODEL_NAME=$(yq -r '.model_name' $CONFIG_FILE | awk -F'/' '{print $NF}')  # MODEL_NAME="all-MiniLM-L6-v2"
 echo "Extracted MODEL_NAME: $MODEL_NAME"
-CONTENT=$(yq '.content' $CONFIG_FILE)
-CPUS=(0 1 2)  # Adjust based on available cores
+CONTENT=$(yq -r '.content' $CONFIG_FILE)
+CPUS=(0)  # Set equal to num of embedding files. Adjust to available cores if necessary
 VECTOR_SIZE=$(yq '.vector_size' $CONFIG_FILE)
-HOST=$(yq '.qdrant_host' $CONFIG_FILE)
-PORT=$(yq '.qdrant_port' $CONFIG_FILE)
+HOST=$(yq -r '.qdrant_host' $CONFIG_FILE)
+PORT=$(yq -r '.qdrant_port' $CONFIG_FILE)
 CHECKPOINT_DIR=$(yq '.checkpoint_dir' $CONFIG_FILE)
 BATCH_SIZE=$(yq '.upsert_batch_size' $CONFIG_FILE)
 CHECK_IF_EXISTS=$(yq '.check_if_point_exists' $CONFIG_FILE)
