@@ -1,0 +1,5 @@
+# Ignore local env, storage, and cache dirs
+miriadEnv/
+qdrant_storage/
+rag_pipeline/embedding/
+rag_pipeline/src/__pycache__/
