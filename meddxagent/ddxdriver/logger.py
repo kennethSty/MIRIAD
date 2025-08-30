@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 from typing import Union
 
-from ddxdriver.utils import find_project_root
+from meddxagent.ddxdriver.utils import find_project_root
 
 # Global variables to store the log file path and initialization status
 log_file_path = None

@@ -3,7 +3,7 @@ from typing import List, Dict
 from .searchrag_base import SearchRAGBase
 from ._searchrag_utils import format_search_result
 from .utils import get_rag_synthesis_system_prompt, get_rag_synthesis_user_prompt
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.logger import log
 
 class SearchRAGStandard(SearchRAGBase):
 

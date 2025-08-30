@@ -1,13 +1,13 @@
 from typing import Dict
 
-from ddxdriver.benchmarks import Bench
-from ddxdriver.diagnosis_agents import Diagnosis
-from ddxdriver.history_taking_agents import HistoryTaking
-from ddxdriver.patient_agents import PatientAgent
-from ddxdriver.rag_agents import RAG
-from ddxdriver.models import init_model
-from ddxdriver.utils import Agents, Patient
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.benchmarks import Bench
+from meddxagent.ddxdriver.diagnosis_agents import Diagnosis
+from meddxagent.ddxdriver.history_taking_agents import HistoryTaking
+from meddxagent.ddxdriver.patient_agents import PatientAgent
+from meddxagent.ddxdriver.rag_agents import RAG
+from meddxagent.ddxdriver.models import init_model
+from meddxagent.ddxdriver.utils import Agents, Patient
+from meddxagent.ddxdriver.logger import log
 
 from .base import DDxDriver
 from .utils import (
@@ -101,32 +101,8 @@ class FixedChoice(DDxDriver):
             self.agent_order_idx = 0
             self.previous_agent = ""
 
-        if self.agent_prompt_length == 0 and agent_turn != Agents.RAG.value:
-            # Optionally setting agent prompt to None if not RAG and specified
-            agent_prompt = ""
-        else:
-            # Generate new agent prompt
-            log.info("Generating agent prompt...")
-            system_prompt = get_fixed_choice_system_prompt(
-                specialist_preface=self.bench.SPECIALIST_PREFACE
-            )
+        
 
-            # Having RAG agent prompt length be dependent on how many keyword searches
-            rag_search_length = (
-                self.rag_agent.max_keyword_searches if self.rag_agent else self.agent_prompt_length
-            )
-
-            user_prompt = get_fixed_choice_user_prompt(
-                agent_type=agent_turn,
-                patient=self.patient,
-                rag_content=self.get_final_rag_content(),
-                previous_pred_ddxs=self.get_k_final_ddxs(k=self.K_PREVIOUS_DDXS),
-                diagnosis_options=self.bench.diagnosis_options,
-                agent_instruction_length=self.agent_prompt_length,
-                rag_search_length=rag_search_length,
-            )
-            # log.info("Fixed Choice DDxDriver User prompt:\n" + user_prompt + "\n\n")
-            agent_prompt = self.model(user_prompt=user_prompt, system_prompt=system_prompt)
 
         # Calling agent based on agent turn and agent prompt
         if agent_turn == Agents.HISTORY_TAKING.value:
@@ -134,8 +110,8 @@ class FixedChoice(DDxDriver):
                 log.info("No history taking agent defined, skipping history taking...\n")
                 return
             log.info("Starting history taking...\n")
+            conversation_goals = self.get_agent_prompt(agent_type=agent_turn)
             self.new_dialogue_available = True
-            conversation_goals = agent_prompt
             log.info(f"Conversation goals for history taking:\n" + conversation_goals + "\n")
             return self.history_taking_agent(
                 patient_agent=self.patient_agent,
@@ -147,7 +123,14 @@ class FixedChoice(DDxDriver):
                 log.info("No rag agent defined, skipping rag...\n")
                 return
             log.info("Starting RAG...\n")
-            input_search = agent_prompt
+            rag_search_length = (
+                self.rag_agent.get_max_num_searches() if self.rag_agent else self.agent_prompt_length
+            )
+            rag_type = self.rag_agent.get_type()
+            input_search = self.get_agent_prompt(
+                agent_type=rag_type,
+                rag_search_length=rag_search_length
+            )
             log.info("Input search for RAG:\n" + input_search + "\n")
             return self.rag_agent(
                 input_search=input_search, diagnosis_options=self.bench.diagnosis_options
@@ -157,7 +140,7 @@ class FixedChoice(DDxDriver):
                 log.info("No diagnosis agent defined, skipping diagnosis...")
                 return
             log.info("Starting diagnosis...\n")
-            diagnosis_instructions = agent_prompt
+            diagnosis_instructions = self.get_agent_prompt(agent_type=agent_turn)
             log.info("Diagnosis Instructions:\n" + diagnosis_instructions + "\n")
             previous_search_content = (
                 self.get_final_rag_content() if self.previous_agent == Agents.RAG.value else ""
@@ -172,3 +155,28 @@ class FixedChoice(DDxDriver):
         else:
             error_message= "Invalid turn number, returning early from ddxdriver..."
             raise Exception(error_message)
+
+    def get_agent_prompt(self, agent_type, rag_search_length=None):
+        
+        agent_prompt_length = rag_search_length if rag_search_length else self.agent_prompt_length
+        if agent_prompt_length == 0 and agent_type != Agents.RAG.value:
+            # Optionally setting agent prompt to None if not RAG and specified
+            return ""
+        
+        system_prompt = get_fixed_choice_system_prompt(
+            specialist_preface=self.bench.SPECIALIST_PREFACE
+        )
+        
+        prompt_to_driver = get_fixed_choice_user_prompt(
+            agent_type=agent_type,
+            patient=self.patient,
+            rag_content=self.get_final_rag_content(),
+            previous_pred_ddxs=self.get_k_final_ddxs(k=self.K_PREVIOUS_DDXS),
+            diagnosis_options=self.bench.diagnosis_options,
+            agent_instruction_length=agent_prompt_length,
+        )
+        # log.info("Fixed Choice DDxDriver User prompt:\n" + user_prompt + "\n\n")
+        log.info(f"Driver creates prompt for {agent_type} agent\n")
+        agent_prompt = self.model(user_prompt=prompt_to_driver, system_prompt=system_prompt)
+        log.info(f"Driver created prompt: {agent_prompt}\n")
+        return agent_prompt 

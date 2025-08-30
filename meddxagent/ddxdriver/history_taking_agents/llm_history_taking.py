@@ -1,13 +1,13 @@
 from typing import Dict
 
-from ddxdriver.models import init_model
-from ddxdriver.patient_agents import PatientAgent
-from ddxdriver.benchmarks import Bench
-from ddxdriver.utils import OutputDict
+from meddxagent.ddxdriver.models import init_model
+from meddxagent.ddxdriver.patient_agents import PatientAgent
+from meddxagent.ddxdriver.benchmarks import Bench
+from meddxagent.ddxdriver.utils import OutputDict
 
 from .base import HistoryTaking
 from .utils import get_history_taking_system_prompt, get_history_taking_user_prompt
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.logger import log
 
 class LLMHistoryTaking(HistoryTaking):
     def __init__(self, history_taking_agent_cfg):

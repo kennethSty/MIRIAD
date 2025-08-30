@@ -17,7 +17,8 @@ class Agents(Enum):
     HISTORY_TAKING = "history_taking"
     RAG = "rag"
     DIAGNOSIS = "diagnosis"
-
+    MIRIAD_RAG = "miriad_rag"
+    SEARCH_RAG = "search_rag"
 
 class OutputDict(Enum):
     """

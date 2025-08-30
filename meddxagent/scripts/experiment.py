@@ -6,10 +6,10 @@ import traceback
 import time
 import argparse
 
-from ddxdriver.run_ddxdriver import run_ddxdriver
-from ddxdriver.utils import find_project_root
-from ddxdriver.logger import log, enable_logging, set_file_handler, log_json_data
-from ddxdriver.rag_agents._searchrag_utils import Corpus
+from meddxagent.ddxdriver.run_ddxdriver import run_ddxdriver
+from meddxagent.ddxdriver.utils import find_project_root
+from meddxagent.ddxdriver.logger import log, enable_logging, set_file_handler, log_json_data
+from meddxagent.ddxdriver.rag_agents._searchrag_utils import Corpus
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent  # Adjust as needed
@@ -110,17 +110,17 @@ def diagnosis_experiment(diagnosis_experiment_folder: Union[str, Path]):
 
     # Defining ddxdriver_cfg (model won't be used)
     ddxdriver_cfg = {
-        "class_name": "ddxdriver.ddxdrivers.fixed_choice.FixedChoice",
+        "class_name": "meddxagent.ddxdriver.ddxdrivers.fixed_choice.FixedChoice",
         "config": {
             "seed": 42,
             "agent_prompt_length": 0,
             "agent_order": ["diagnosis"],
             "iterations": 1,
             "model": {
-                "class_name": "ddxdriver.models.llama3_instruct.Llama3Instruct",
+                "class_name": "meddxagent.ddxdriver.models.llama3_instruct.Llama3Instruct",
                 "config": {"model_name": "llama31instruct"},
-                # "class_name": "ddxdriver.models.oai_azure_chat.OpenAIAzureChat",
-                # "class_name": "ddxdriver.models.oai_chat.OpenAIChat",
+                # "class_name": "meddxagent.ddxdriver.models.oai_azure_chat.OpenAIAzureChat",
+                # "class_name": "meddxagent.ddxdriver.models.oai_chat.OpenAIChat",
                 # "config": {"model_name": "gpt-4o"},
             },
         },
@@ -148,17 +148,17 @@ def diagnosis_experiment(diagnosis_experiment_folder: Union[str, Path]):
             bench_cfg["config"]["knn_search_cfg"][
                 "precompute_new_embeddings"
             ] = precompute_new_embeddings
-            bench_cfg["class_name"] = f"ddxdriver.benchmarks.{dataset}"
+            bench_cfg["class_name"] = f"meddxagent.ddxdriver.benchmarks.{dataset}"
             bench_cfg["config"]["knn_search_cfg"]["embedding_model"] = embedding_model
             bench_cfg["config"]["knn_search_cfg"]["pooling"] = diagnosis_agent.get("pooling")
             bench_cfg["num_patients"] = NUM_PATIENTS
             bench_cfg["enforce_diagnosis_options"] = True
 
             diagnosis_cfg = {
-                "class_name": f"ddxdriver.diagnosis_agents.{diagnosis_agent['class_name']}",
+                "class_name": f"meddxagent.ddxdriver.diagnosis_agents.{diagnosis_agent['class_name']}",
                 "config": {
                     "model": {
-                        "class_name": f"ddxdriver.models.{model['class_name']}",
+                        "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                         "config": {"model_name": model["model_name"]},
                     },
                     "fewshot": {
@@ -251,20 +251,20 @@ def history_taking_experiment(history_taking_experiment_folder: Union[str, Path]
         try:
             bench_cfg = yaml.safe_load((PROJECT_ROOT / "configs/bench.yml").read_text())
 
-            bench_cfg["class_name"] = f"ddxdriver.benchmarks.{dataset}"
+            bench_cfg["class_name"] = f"meddxagent.ddxdriver.benchmarks.{dataset}"
             bench_cfg["num_patients"] = NUM_PATIENTS
             bench_cfg["enforce_diagnosis_options"] = True
 
             # Defining ddxdriver_cfg (using the same model as specified by user)
             ddxdriver_cfg = {
-                "class_name": "ddxdriver.ddxdrivers.fixed_choice.FixedChoice",
+                "class_name": "meddxagent.ddxdriver.ddxdrivers.fixed_choice.FixedChoice",
                 "config": {
                     "seed": 42,
                     "agent_prompt_length": 0,
                     "agent_order": ["history_taking", "diagnosis"],
                     "iterations": 1,
                     "model": {
-                        "class_name": f"ddxdriver.models.{model['class_name']}",
+                        "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                         "config": {"model_name": model["model_name"]},
                     },
                 },
@@ -272,10 +272,10 @@ def history_taking_experiment(history_taking_experiment_folder: Union[str, Path]
 
             # Diagnosis agent config
             diagnosis_cfg = {
-                "class_name": "ddxdriver.diagnosis_agents.single_llm_standard.SingleLLMStandard",
+                "class_name": "meddxagent.ddxdriver.diagnosis_agents.single_llm_standard.SingleLLMStandard",
                 "config": {
                     "model": {
-                        "class_name": f"ddxdriver.models.{model['class_name']}",
+                        "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                         "config": {"model_name": model["model_name"]},
                     },
                     "fewshot": {"type": "none", "num_shots": 0},
@@ -287,13 +287,13 @@ def history_taking_experiment(history_taking_experiment_folder: Union[str, Path]
             )
             history_taking_cfg["config"]["max_questions"] = max_questions
             history_taking_cfg["config"]["model"] = {
-                "class_name": f"ddxdriver.models.{model['class_name']}",
+                "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                 "config": {"model_name": model["model_name"]},
             }
 
             patient_cfg = yaml.safe_load((PROJECT_ROOT / "configs/patient_agents/llm_patient.yml").read_text())
             patient_cfg["config"]["model"] = {
-                "class_name": f"ddxdriver.models.{model['class_name']}",
+                "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                 "config": {"model_name": model["model_name"]},
             }
             cfgs.append((ddxdriver_cfg, history_taking_cfg, patient_cfg, diagnosis_cfg, bench_cfg))
@@ -329,7 +329,7 @@ def history_taking_experiment(history_taking_experiment_folder: Union[str, Path]
             # Log config
             set_file_handler(experiment_logging_path, mode="a")
             json_data = {
-                "ddxdriver_cfg": ddxdriver_cfg,
+                "meddxagent.ddxdriver.cfg": ddxdriver_cfg,
                 "history_taking_cfg": history_taking_cfg,
                 "bench_cfg": bench_cfg,
                 "patient_cfg": patient_cfg,
@@ -381,8 +381,8 @@ def rag_experiment(rag_experiment_folder: Union[str, Path]):
 
     # Corpus name: PubMed and Wikipedia
     corpus_names = [Corpus.PUBMED.value, Corpus.WIKIPEDIA.value]
-    
-    num_combinations = len(list(itertools.product(models, datasets, corpus_names)))
+    num_rag_stratgegies = 2 # Miriad and Search    
+    num_combinations = num_rag_stratgegies * len(list(itertools.product(models, datasets, corpus_names)))
 
     # Create bench and diagnosis configs
     cfgs = []
@@ -391,13 +391,13 @@ def rag_experiment(rag_experiment_folder: Union[str, Path]):
         try:
             bench_cfg = yaml.safe_load((PROJECT_ROOT / "configs/bench.yml").read_text())
 
-            bench_cfg["class_name"] = f"ddxdriver.benchmarks.{dataset}"
+            bench_cfg["class_name"] = f"meddxagent.ddxdriver.benchmarks.{dataset}"
             bench_cfg["num_patients"] = NUM_PATIENTS
             bench_cfg["enforce_diagnosis_options"] = True
 
             # Defining ddxdriver_cfg (model will be used to provide RAG search to ddxdriver + give diagnosis instructions to diagnosis agent)
             ddxdriver_cfg = {
-                "class_name": "ddxdriver.ddxdrivers.fixed_choice.FixedChoice",
+                "class_name": "meddxagent.ddxdriver.ddxdrivers.fixed_choice.FixedChoice",
                 "config": {
                     "seed": 42,
                     "agent_prompt_length": 0,
@@ -405,7 +405,7 @@ def rag_experiment(rag_experiment_folder: Union[str, Path]):
                     "iterations": 1,
                     "only_patient_initial_information": True, #ONLY PATIENT INFO
                     "model": {
-                        "class_name": f"ddxdriver.models.{model['class_name']}",
+                        "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                         "config": {"model_name": model["model_name"]},
                     },
                 },
@@ -413,29 +413,63 @@ def rag_experiment(rag_experiment_folder: Union[str, Path]):
 
             # Diagnosis agent config
             diagnosis_cfg = {
-                "class_name": "ddxdriver.diagnosis_agents.single_llm_standard.SingleLLMStandard",
+                "class_name": "meddxagent.ddxdriver.diagnosis_agents.single_llm_standard.SingleLLMStandard",
                 "config": {
                     "model": {
-                        "class_name": f"ddxdriver.models.{model['class_name']}",
+                        "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                         "config": {"model_name": model["model_name"]},
                     },
                     "fewshot": {"type": "none", "num_shots": 0},
                 },
             }
+            
+            miriad_rag_cfg = {
+                "class_name": "meddxagent.ddxdriver.rag_agents.miriad_rag.MiriadRAG",
+                "config": {
+                    "embedding": {
+                        "model_names": [
+                            "BAAI/bge-large-en-v1.5",
+                            "sentence-transformers/all-MiniLM-L6-v2"
+                        ],
+                        "contents": ["qa"],
+                        "emb_model_name": "BAAI/bge-large-en-v1.5",
+                        "content": "qa"
+                        },
+                    "model": {
+                        "class_name": "meddxagent.ddxdriver.models.llama31_8b.Llama318B",
+                        "config": {
+                            "model_name": "meta-llama/Meta-Llama-3.1-8B-Instruct"
+                        }
+                    },
+                    "qdrant": {
+                        "host": "localhost",
+                        "port": 6333,
+                        "collection": "miriad_{emb_model_name}_{content}"
+                    },
+                    "retrieval": {
+                        "top_k_search": 2,
+                        "max_question_searches": 3
+                    }
+                }
+            }
 
-            rag_cfg = {
-                "class_name": "ddxdriver.rag_agents.searchrag_standard.SearchRAGStandard",
+
+            search_rag_cfg = {
+                "class_name": "meddxagent.ddxdriver.rag_agents.searchrag_standard.SearchRAGStandard",
                 "config": {
                     "corpus_name": corpus_name,
                     "top_k_search": 2,
                     "max_keyword_searches": 3,
                     "model": {
-                        "class_name": f"ddxdriver.models.{model['class_name']}",
+                        "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                         "config": {"model_name": model["model_name"]},
                     },
                 },
             }
-            cfgs.append((rag_cfg, ddxdriver_cfg, diagnosis_cfg, bench_cfg))
+
+            cfgs.append((miriad_rag_cfg, ddxdriver_cfg, diagnosis_cfg, bench_cfg))
+            cfgs.append((search_rag_cfg, ddxdriver_cfg, diagnosis_cfg, bench_cfg))
+
         except Exception as e:
             tb = traceback.format_exc()
             log.error(f"Error with setting up diagnosis experiments:\n{e}\nTraceback:\n{tb}")
@@ -466,7 +500,7 @@ def rag_experiment(rag_experiment_folder: Union[str, Path]):
             json_data = {
                 "rag_cfg": rag_cfg,
                 "bench_cfg": bench_cfg,
-                "ddxdriver_cfg": ddxdriver_cfg,
+                "meddxagent.ddxdriver.cfg": ddxdriver_cfg,
                 "diagnosis_cfg": diagnosis_cfg,
             }
             log_json_data(json_data=json_data, file_path=experiment_folder / "configs.json")
@@ -558,10 +592,10 @@ def iterative_experiment(iterative_experiment_folder: Union[str, Path]):
             embedding_model = dataset.get("fewshot_embedding_model")
 
             diagnosis_cfg = {
-                "class_name": f"ddxdriver.diagnosis_agents.{dataset['diagnosis_agent_class_name']}",
+                "class_name": f"meddxagent.ddxdriver.diagnosis_agents.{dataset['diagnosis_agent_class_name']}",
                 "config": {
                     "model": {
-                        "class_name": f"ddxdriver.models.{model['class_name']}",
+                        "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                         "config": {"model_name": model["model_name"]},
                     },
                     "fewshot": {
@@ -580,24 +614,24 @@ def iterative_experiment(iterative_experiment_folder: Union[str, Path]):
             )
             history_taking_cfg["config"]["max_questions"] = 5
             history_taking_cfg["config"]["model"] = {
-                "class_name": f"ddxdriver.models.{model['class_name']}",
+                "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                 "config": {"model_name": model["model_name"]},
             }
 
             patient_cfg = yaml.safe_load((PROJECT_ROOT / "configs/patient_agents/llm_patient.yml").read_text())
             patient_cfg["config"]["model"] = {
-                "class_name": f"ddxdriver.models.{model['class_name']}",
+                "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                 "config": {"model_name": model["model_name"]},
             }
 
             rag_cfg = {
-                "class_name": "ddxdriver.rag_agents.searchrag_standard.SearchRAGStandard",
+                "class_name": "meddxagent.ddxdriver.rag_agents.searchrag_standard.SearchRAGStandard",
                 "config": {
                     "corpus_name": "PubMed",
                     "top_k_search": 2,
                     "max_keyword_searches": 3,
                     "model": {
-                        "class_name": f"ddxdriver.models.{model['class_name']}",
+                        "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                         "config": {"model_name": model["model_name"]},
                     },
                 },
@@ -613,7 +647,7 @@ def iterative_experiment(iterative_experiment_folder: Union[str, Path]):
             bench_cfg["config"]["knn_search_cfg"][
                 "precompute_new_embeddings"
             ] = precompute_new_embeddings
-            bench_cfg["class_name"] = f"ddxdriver.benchmarks.{dataset['dataset']}"
+            bench_cfg["class_name"] = f"meddxagent.ddxdriver.benchmarks.{dataset['dataset']}"
             bench_cfg["config"]["knn_search_cfg"]["embedding_model"] = embedding_model
             bench_cfg["config"]["knn_search_cfg"]["pooling"] = "average"
             bench_cfg["num_patients"] = NUM_PATIENTS
@@ -621,11 +655,11 @@ def iterative_experiment(iterative_experiment_folder: Union[str, Path]):
 
             # Create ddxdriver config
             ddxdriver_cfg = {
-                "class_name": f"ddxdriver.ddxdrivers.{ddxdriver['class_name']}",
+                "class_name": f"meddxagent.ddxdriver.ddxdrivers.{ddxdriver['class_name']}",
                 "config": {
                     "agent_prompt_length": 10,
                     "model": {
-                        "class_name": f"ddxdriver.models.{model['class_name']}",
+                        "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                         "config": {"model_name": model["model_name"]},
                     },
                 },
@@ -678,7 +712,7 @@ def iterative_experiment(iterative_experiment_folder: Union[str, Path]):
             # Log confi
             set_file_handler(experiment_logging_path, mode="a")
             json_data = {
-                "ddxdriver_cfg": ddxdriver_cfg,
+                "meddxagent.ddxdriver.cfg": ddxdriver_cfg,
                 "bench_cfg": bench_cfg,
                 "diagnosis_cfg": diagnosis_cfg,
                 "history_taking_cfg": history_taking_cfg,

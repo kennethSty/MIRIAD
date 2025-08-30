@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 from typing import Dict, List
 
-from ddxdriver.utils import Patient
-from ddxdriver.benchmarks import Bench
+from meddxagent.ddxdriver.utils import Patient
+from meddxagent.ddxdriver.benchmarks import Bench
 
 
 class Diagnosis(ABC):

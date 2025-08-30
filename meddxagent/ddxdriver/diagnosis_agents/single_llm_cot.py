@@ -1,14 +1,14 @@
 from typing import Dict, List
 
-from ddxdriver.models import init_model
-from ddxdriver.utils import (
+from meddxagent.ddxdriver.models import init_model
+from meddxagent.ddxdriver.utils import (
     parse_differential_diagnosis,
     strip_all_lines,
     Patient,
     OutputDict,
     Constants,
 )
-from ddxdriver.benchmarks import Bench
+from meddxagent.ddxdriver.benchmarks import Bench
 
 from .single_llm_base import SingleLLMBase
 from .utils import (
@@ -18,7 +18,7 @@ from .utils import (
     get_self_generate_ddx_cot_user_prompt,
     DiagnosisError,
 )
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.logger import log
 
 
 class SingleLLMCOT(SingleLLMBase):

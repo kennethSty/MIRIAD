@@ -2,7 +2,7 @@ from typing import List
 from re import search, DOTALL
 from ast import literal_eval
 
-from ddxdriver.utils import strip_all_lines
+from meddxagent.ddxdriver.utils import strip_all_lines
 
 MAX_KEYWORD_SEARCHES = 5
 
@@ -69,6 +69,41 @@ def get_create_keywords_user_prompt(
         Keyword searches list:
     """
     )
+
+def get_create_questions_user_prompt(
+    input_search: str, max_question_searches: int = MAX_KEYWORD_SEARCHES
+):
+    return strip_all_lines(
+        f"""\
+            Your job is to assist in the creation of a differential diagnosis for a patient by formulating a list of clinically relevant questions.
+            Given an input search by the user, break the search up into a parsable Python list of individual questions. 
+            Follow these steps:
+            1) Determine the most important questions that will help refine the differential diagnosis, at most {max_question_searches}
+            - Likely, the most important questions are those that uncover key symptoms, antecedents, or risk factors
+            2) If necessary, reformulate those questions into clear and specific questions
+            - Each question should be complete and understandable on its own
+            - They should capture the unique clinical information that could be obtained by searches in external databases 
+            3) Return these questions as a list of strings (max size of {max_question_searches}), which should be parsable as a Python list
+            - Only return this list, nothing else
+            - If there are no relevant questions, simply return an empty list: []
+
+        Here is an example of the format you should follow (replace the placeholders inside the arrow brackets, and do not include the arrow brackets themselves). 
+        Do not overfit to the length of the list in this example.
+        Format example:
+        Input search:
+        <INPUT_QUESTIONS>
+        Questions list:
+        [<QUESTION_1>, <QUESTION_2>]
+
+        Now it is your turn to break up the user's input questions into a list of individual questions.
+        Only return the questions list, nothing else.
+
+        Input search:
+        {input_search}
+        Questions list:
+    """
+    )
+
 
 
 def get_modify_keywords_user_prompt(input_search: str, keyword_searches: List[str]):

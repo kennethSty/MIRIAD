@@ -6,7 +6,7 @@ from openai import OpenAI
 
 from .base import Model
 from .utils import retry_with_exponential_backoff, get_condensed_chat_messages
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.logger import log
 
 class Llama370BUltraMedical(Model):
     def __init__(self, model_name="Llama-3-70B-UltraMedical", num_workers: int = 16) -> None:

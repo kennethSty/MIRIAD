@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import Dict
 
-from ddxdriver.utils import DialogueHistory
-from ddxdriver.patient_agents import PatientAgent
-from ddxdriver.benchmarks import Bench
+from meddxagent.ddxdriver.utils import DialogueHistory
+from meddxagent.ddxdriver.patient_agents import PatientAgent
+from meddxagent.ddxdriver.benchmarks import Bench
 
 class HistoryTaking(ABC):
     @abstractmethod

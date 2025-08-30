@@ -4,9 +4,9 @@ from pathlib import Path
 from typing import List, Set, Dict, Any
 from datasets import Dataset, load_dataset
 
-from ddxdriver.models import Model
-from ddxdriver.models.oai_azure_chat import OpenAIAzureChat
-from ddxdriver.utils import strip_all_lines
+from meddxagent.ddxdriver.models import Model
+from meddxagent.ddxdriver.models.oai_azure_chat import OpenAIAzureChat
+from meddxagent.ddxdriver.utils import strip_all_lines
 
 '''
 This script is used to generate the disease options for the rarebench dataset and extract the disease options for the icraftmd dataset.

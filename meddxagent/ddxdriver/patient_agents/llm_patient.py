@@ -1,4 +1,4 @@
-from ddxdriver.models import init_model
+from meddxagent.ddxdriver.models import init_model
 
 from .utils import get_patient_system_prompt, get_patient_user_prompt
 

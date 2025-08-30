@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import final
 from copy import deepcopy
 
-from ddxdriver.logger import log
-from ddxdriver.utils import DialogueHistory, Patient
+from meddxagent.ddxdriver.logger import log
+from meddxagent.ddxdriver.utils import DialogueHistory, Patient
 
 
 class PatientAgent(ABC):

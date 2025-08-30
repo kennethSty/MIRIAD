@@ -1,4 +1,4 @@
-from ddxdriver.utils import strip_all_lines
+from meddxagent.ddxdriver.utils import strip_all_lines
 
 
 def get_patient_system_prompt(patient_profile: str):

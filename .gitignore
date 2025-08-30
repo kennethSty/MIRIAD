@@ -3,3 +3,8 @@ miriadEnv/
 qdrant_storage/
 rag_pipeline/embedding/
 rag_pipeline/src/__pycache__/
+__pycache__/
+*.swp
+*.log
+test_miriad_rag.py
+**/.env

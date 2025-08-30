@@ -1,7 +1,7 @@
 import ast
 from typing import Tuple, List
 
-from ddxdriver.utils import (
+from meddxagent.ddxdriver.utils import (
     strip_all_lines,
     ddx_list_to_string,
     DialogueHistory,
@@ -9,7 +9,7 @@ from ddxdriver.utils import (
     Agents,
     Constants,
 )
-from ddxdriver.models import Model
+from meddxagent.ddxdriver.models import Model
 
 def dialogue_to_patient_profile(dialogue_history_text: str, patient: Patient, model: Model) -> str:
     """
@@ -132,7 +132,7 @@ def get_agent_description(
             - If Conversation Goals are specified, focus your questions on accomplishing these goals
             - You may should clarify antecedents/symptoms in the Patient Initial Information.
         """
-    if agent_type == Agents.RAG.value:
+    if agent_type == Agents.SEARCH_RAG.value:
         # Since rag requires at least one topic to search for, default to Constants.AGENT_PROMPT_LENGTH.value
         agent_function = "Retrieves relevant disease information (symptoms, antecedents) to help create/edit the differential diagnosis of the patient."
         agent_prompt = (
@@ -143,6 +143,21 @@ def get_agent_description(
             "You should also provide a free text instruction of how you want the agent to respond.\n"
             "Limit your response to length of a short paragraph or two, which may include a short list.\n"
         )
+
+    if agent_type == Agents.MIRIAD_RAG.value:
+        # Function: retrieves answers to clinical questions relevant for differential diagnosis
+        agent_function = "Retrieves answers to questions about relevant disease information (symptoms, antecedents) from an external database to help create/edit the differential diagnosis of the patient."
+
+        # Prompt: instructs the agent to formulate the questions
+        agent_prompt = (
+            f"Provide a detailed yet concise list of at maximum {agent_prompt_length} clinically relevant questions about the diseases that the patient may suffer from.\n"
+            "These questions should be aimed at symptoms, antecedents, risk factors, or other information which can assist in creating an differential diagnoses based on their answers.\n"
+            "Do not include questions about treatments, diagnostic procedures or details that only the patient could answer.\n"
+            "Do not include questions that were already answered by previous RAG content. \n"
+            "You should also provide a free text instruction of how you want the agent to respond.\n"
+            "Limit your response to length of a short paragraph or two, which may include a short list.\n"
+        )
+
     if agent_type == Agents.DIAGNOSIS.value:
         agent_function = "Returns a ranked differential diagnosis of the patient. Either creates a new one or edits a previous one."
         agent_prompt = strip_all_lines(

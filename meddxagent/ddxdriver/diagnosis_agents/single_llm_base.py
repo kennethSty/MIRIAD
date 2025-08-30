@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from typing import final, Dict, List
 import traceback 
 
-from ddxdriver.models import init_model
-from ddxdriver.utils import parse_differential_diagnosis, strip_all_lines, Patient, OutputDict, Constants
-from ddxdriver.logger import log
-from ddxdriver.benchmarks import Bench
+from meddxagent.ddxdriver.models import init_model
+from meddxagent.ddxdriver.utils import parse_differential_diagnosis, strip_all_lines, Patient, OutputDict, Constants
+from meddxagent.ddxdriver.logger import log
+from meddxagent.ddxdriver.benchmarks import Bench
 from .utils import DiagnosisError
 from .base import Diagnosis
 

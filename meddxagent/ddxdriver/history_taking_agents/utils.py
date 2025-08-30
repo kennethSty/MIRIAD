@@ -1,6 +1,6 @@
 from typing import List
 
-from ddxdriver.utils import strip_all_lines
+from meddxagent.ddxdriver.utils import strip_all_lines
 
 
 def get_history_taking_system_prompt(

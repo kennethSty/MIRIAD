@@ -2,7 +2,7 @@ import json
 from typing import List, Mapping, Dict
 from datasets import Dataset
 
-from ddxdriver.utils import strip_all_lines, Patient
+from meddxagent.ddxdriver.utils import strip_all_lines, Patient
 
 from .base import Bench
 

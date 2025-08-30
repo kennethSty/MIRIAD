@@ -2,9 +2,9 @@ from enum import Enum
 from typing import List, Dict, Tuple, Any
 import json
 
-from ddxdriver.models.base import Model
-from ddxdriver.benchmarks.base import Bench
-from ddxdriver.utils import strip_all_lines, ddx_list_to_string, Constants
+from meddxagent.ddxdriver.models.base import Model
+from meddxagent.ddxdriver.benchmarks.base import Bench
+from meddxagent.ddxdriver.utils import strip_all_lines, ddx_list_to_string, Constants
 
 
 class FewshotType(Enum):

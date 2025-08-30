@@ -4,14 +4,15 @@ from bs4 import BeautifulSoup
 from enum import Enum
 from typing import List, Dict
 
-from ddxdriver.utils import strip_all_lines
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.utils import strip_all_lines
+from meddxagent.ddxdriver.logger import log
 
 ADDED_EXTRA = 10
 
 class Corpus(Enum):
     PUBMED = "PubMed"
     WIKIPEDIA = "Wikipedia"
+    MIRIAD = "Miriad"
 
 
 def api_search(
@@ -23,14 +24,35 @@ def api_search(
         return _search_pubmed(query=query, top_k=top_k)
     elif corpus_name == Corpus.WIKIPEDIA.value:
         return _search_wikipedia(query=query, top_k=top_k)
+    elif corpus_name == Corpus.MIRIAD.value:
+        return _search_miriad(query=query, top_k=top_k)
 
 
 def format_search_result(result):
     """Format a single result into a string."""
     if not all(key in result for key in ["title", "content"]):
         log.warning("Result formatted incorrectly, returning nothing")
+        log.warning(f"Result {str(result)}")
+        exit()
     else:
         return f"Title: {result['title']}\nContent:\n{result['content']}"
+
+def _search_miriad(
+    query: str,
+    top_k: int = 5,
+    email: str = "your.email@example.com",
+) -> List[Dict[str, str]]:
+    """
+    Search Miriad for a keyword and return the formatted question and answer pairs of the top k results.
+
+    Args:
+    - query (str): The search query.
+    - top_k (int): The number of top results to return.
+
+    Returns:
+    - list of dict: A list of dictionaries with 'question' and 'answer' for each result.
+    """
+    raise NotImplementedError 
 
 
 def _search_pubmed(
@@ -103,26 +125,27 @@ def _search_pubmed(
 
     return results
 
-
 def _search_wikipedia(
     query: str, top_k: int = 5, min_summary_length: int = 100
 ) -> List[Dict[str, str]]:
     """
     Search Wikipedia for a query and return the titles and summaries of the top k results.
-    Skip results with summaries shorter than a specified length.
-
-    Handles cases where the query is too long for the Wikipedia API.
+    Skips results with summaries shorter than a specified length.
 
     Args:
-    - query (str): The search query.
-    - top_k (int): The number of top results to return.
-    - min_summary_length (int): The minimum length of the summary to accept.
+        query (str): The search query.
+        top_k (int): The number of top results to return.
+        min_summary_length (int): The minimum length of the summary to accept.
 
     Returns:
-    - list of dict: A list of dictionaries with 'title' and 'summary' for each result.
+        List[Dict[str, str]]: A list of dictionaries with 'title' and 'summary' keys.
     """
+
     url = "https://en.wikipedia.org/w/api.php"
-    max_query_length = 300  # Wikipedia's max length
+    max_query_length = 300  # Wikipedia's max search length
+    headers = {
+        "User-Agent": "WikipediaSearchEx/1.0 (contact: example@example.com)"
+    }
 
     # Truncate the query if it's too long
     if len(query) > max_query_length:
@@ -130,53 +153,66 @@ def _search_wikipedia(
         print(f"Query too long. Truncated to: {query}")
 
     # Perform the search request
-    search_response = requests.get(
-        url,
-        params={
-            "action": "query",
-            "list": "search",
-            "srsearch": query,
-            "srlimit": top_k
-            + ADDED_EXTRA,  # Fetch more to compensate for potentially short summaries
-            "format": "json",
-        },
-    )
+    try:
+        search_response = requests.get(
+            url,
+            params={
+                "action": "query",
+                "list": "search",
+                "srsearch": query,
+                "srlimit": top_k + 3,  # fetch extra in case of short summaries
+                "format": "json",
+            },
+            headers=headers,
+            timeout=10,
+        )
+        search_response.raise_for_status()
+        search_data = search_response.json()
+    except Exception as e:
+        print(f"Search request failed: {e}")
+        return []
 
-    search_data = search_response.json()
-    search_results = search_data["query"]["search"]
-
+    search_results = search_data.get("query", {}).get("search", [])
     results = []
 
-    # Fetch the summary for each search result
+    # Fetch summaries for each result
     for result in search_results:
         if len(results) >= top_k:
             break
 
         title = result["title"]
 
-        # Fetch the page summary
-        page_response = requests.get(
-            url,
-            params={
-                "action": "query",
-                "prop": "extracts",
-                "titles": title,
-                "exintro": True,
-                "format": "json",
-            },
-        )
+        try:
+            page_response = requests.get(
+                url,
+                params={
+                    "action": "query",
+                    "prop": "extracts",
+                    "titles": title,
+                    "exintro": True,
+                    "explaintext": True,
+                    "format": "json",
+                },
+                headers=headers,
+                timeout=10,
+            )
+            page_response.raise_for_status()
+            page_data = page_response.json()
+        except Exception as e:
+            print(f"Failed to fetch page '{title}': {e}")
+            continue
 
-        page_data = page_response.json()
         page_id = next(iter(page_data["query"]["pages"]))
-        page_summary = page_data["query"]["pages"][page_id].get("extract", "No summary available")
+        page_summary = page_data["query"]["pages"][page_id].get("extract", "")
 
-        # Remove HTML tags from the summary
-        page_summary = BeautifulSoup(page_summary, "html.parser").get_text()
-
-        # Skip this summary if it's too short
+        # Skip too-short summaries
         if len(page_summary) < min_summary_length:
             continue
 
-        results.append({"title": title.strip(), "content": page_summary.strip()})
+        results.append({
+            "title": title.strip(),
+            "content": page_summary.strip()
+        })
 
     return results
+

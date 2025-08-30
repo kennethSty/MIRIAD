@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Tuple, Union
 import numpy as np
 
-from ddxdriver.utils import Patient
+from meddxagent.ddxdriver.utils import Patient
 from ._knn_search import KnnSearch
 
 

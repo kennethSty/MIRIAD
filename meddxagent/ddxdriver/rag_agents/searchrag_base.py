@@ -1,8 +1,8 @@
 from typing import final, List, Dict
 import traceback
 
-from ddxdriver.models import init_model
-from ddxdriver.utils import OutputDict, Constants
+from meddxagent.ddxdriver.models import init_model
+from meddxagent.ddxdriver.utils import OutputDict, Constants
 
 from ._searchrag_utils import (
     Corpus,
@@ -13,14 +13,15 @@ from .utils import (
     get_create_keywords_user_prompt,
     get_modify_keywords_user_prompt,
 )
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.logger import log
 from .base import RAG
 
 
 class SearchRAGBase(RAG):
-    def __init__(self, rag_agent_cfg):
-        super().__init__(rag_agent_cfg=rag_agent_cfg)
-
+    def __init__(self, config):
+        super().__init__(config=config)
+        self.top_k_search = self.config.get("top_k_search", 2)
+        self.max_keyword_searches = self.config.get("max_keyword_searches", 5)
         corpus_name = self.config.get("corpus_name", Corpus.PUBMED.value)
         self.corpus_name = (
             corpus_name if corpus_name in Corpus._value2member_map_ else Corpus.PUBMED.value
@@ -29,6 +30,13 @@ class SearchRAGBase(RAG):
         self.model = init_model(
             self.config["model"]["class_name"], **self.config["model"]["config"]
         )
+        self.rag_type = "search_rag"
+
+    def get_max_num_searches(self) -> int:
+        return self.max_keyword_searches
+
+    def get_type(self) -> str:
+        return self.rag_type
 
     @final
     def __call__(
@@ -44,10 +52,13 @@ class SearchRAGBase(RAG):
         Returns dictionary in this form:
         {OutputDict.RAG_CONTENT : "<rag content>"}
         """
+        log.info("Retrtieving documents from {self.corpus_name}")
         retry_counter = 0
+        log.info("Start generating keyword list to guide search...")
         user_prompt = get_create_keywords_user_prompt(
             input_search=input_search, max_keyword_searches=self.max_keyword_searches
         )
+        log.info("Prompt to extract parsable list of keywords: {user_prompt} \n")
         # log.info(user_prompt)
         # exit()
         # log.info(user_prompt)

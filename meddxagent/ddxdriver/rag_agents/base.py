@@ -3,12 +3,13 @@ from typing import List, Dict
 
 class RAG(ABC):
     @abstractmethod
-    def __init__(self, rag_agent_cfg):
+    def __init__(self, config):
         "Initialize the rag agent"
-        
-        self.config = rag_agent_cfg
-        self.top_k_search = self.config.get("top_k_search", 2)
-        self.max_keyword_searches = self.config.get("max_keyword_searches", 5)
+        self.config = config
+
+    @abstractmethod
+    def get_max_num_searches(self) -> int:
+        raise NotImplementedError
 
     @abstractmethod
     def __call__(
@@ -24,6 +25,11 @@ class RAG(ABC):
         Output:
             (str) Text answering the doctor's input search
         """
+        raise NotImplementedError
+    
+    @abstractmethod
+    def get_type(self) -> str:
+        """Return string description of the rag type being done"""
         raise NotImplementedError
 
     @abstractmethod

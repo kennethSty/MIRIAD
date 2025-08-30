@@ -1,9 +1,10 @@
 #!/bin/bash
 
-# Get the directory of this script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# ----------------------------
+# Run Retrieval Agent Experiment
+# ----------------------------
 
-# Default configuration options (no environment variable dependencies)
+# Default configuration options
 NUM_PATIENTS=100
 MODEL_NAME="meta-llama/Meta-Llama-3.1-8B-Instruct"
 
@@ -33,7 +34,12 @@ echo "Number of patients: ${NUM_PATIENTS}"
 echo "Model name: ${MODEL_NAME}"
 echo "Experiment folder: ${EXPERIMENT_FOLDER}"
 
-# Expects to be run from /scripts directory
-cd "${SCRIPT_DIR}" 
-export PYTHONPATH="$(pwd)/..":PYTHONPATH 
-python experiment.py --experiment_type rag --experiment_folder "${EXPERIMENT_FOLDER}" --num_patients "${NUM_PATIENTS}" 
+# Determine MIRIAD root directory
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.."
+export PYTHONPATH="${ROOT_DIR}:${PYTHONPATH}"
+
+python -m meddxagent.scripts.experiment \
+    --experiment_type rag \
+    --experiment_folder "${EXPERIMENT_FOLDER}" \
+    --num_patients "${NUM_PATIENTS}"
+

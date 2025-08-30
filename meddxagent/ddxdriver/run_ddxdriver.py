@@ -7,15 +7,15 @@ from datasets import Dataset
 from copy import deepcopy
 import traceback
 
-from ddxdriver.ddxdrivers import DDxDriver, init_ddxdriver
-from ddxdriver.benchmarks import Bench, init_bench
-from ddxdriver.benchmarks.metrics import get_metrics, get_intermediate_metrics
-from ddxdriver.diagnosis_agents import init_diagnosis_agent
-from ddxdriver.history_taking_agents import init_history_taking_agent
-from ddxdriver.patient_agents import init_patient_agent
-from ddxdriver.rag_agents import init_rag_agent
-from ddxdriver.utils import ddx_list_to_string, Patient, Constants, find_project_root
-from ddxdriver.logger import log, enable_logging, set_file_handler, log_json_data
+from meddxagent.ddxdriver.ddxdrivers import DDxDriver, init_ddxdriver
+from meddxagent.ddxdriver.benchmarks import Bench, init_bench
+from meddxagent.ddxdriver.benchmarks.metrics import get_metrics, get_intermediate_metrics
+from meddxagent.ddxdriver.diagnosis_agents import init_diagnosis_agent
+from meddxagent.ddxdriver.history_taking_agents import init_history_taking_agent
+from meddxagent.ddxdriver.patient_agents import init_patient_agent
+from meddxagent.ddxdriver.rag_agents import init_rag_agent
+from meddxagent.ddxdriver.utils import ddx_list_to_string, Patient, Constants, find_project_root
+from meddxagent.ddxdriver.logger import log, enable_logging, set_file_handler, log_json_data
 
 DEFAULT_EXPERIMENT_PATH = find_project_root() / "experiments/example_experiment"
 WEAK_METRICS = False

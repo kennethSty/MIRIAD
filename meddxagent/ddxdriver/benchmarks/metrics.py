@@ -14,8 +14,8 @@ To change strategy, modify `WEAK_METRICS` in `ddxdriver/run_ddxdriver.py`.
 
 from typing import List, Dict, Union, Callable
 
-from ddxdriver.utils import Patient
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.utils import Patient
+from meddxagent.ddxdriver.logger import log
 
 def strict_match(a: str, b: str) -> bool:
     """Exact string matching between predicted and ground truth diagnosis."""

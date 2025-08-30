@@ -4,7 +4,7 @@ import urllib.request
 from colorama import Fore, Style
 from typing import List, Dict
 
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.logger import log
 
 
 def get_chat_messages(

@@ -2,9 +2,9 @@ from ast import literal_eval
 from typing import List, Mapping
 import random
 from datasets import Dataset, load_dataset
-from ddxdriver.utils import Constants
+from meddxagent.ddxdriver.utils import Constants
 
-from ddxdriver.utils import strip_all_lines, Patient
+from meddxagent.ddxdriver.utils import strip_all_lines, Patient
 
 from .base import Bench
 

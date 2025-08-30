@@ -3,7 +3,7 @@ import torch
 import transformers
 from .base import Model
 from .utils import get_single_user_prompt
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.logger import log
 import os
 import gc
 MAX_NEW_TOKENS = 4096

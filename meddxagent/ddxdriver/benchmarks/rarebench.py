@@ -3,8 +3,8 @@ from pathlib import Path
 from typing import Dict, List, Mapping, Union
 from datasets import Dataset, load_dataset
 
-from ddxdriver.utils import Patient
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.utils import Patient
+from meddxagent.ddxdriver.logger import log
 
 from ._fewshot_utils import make_and_save_embeddings, read_embeddings
 from ._knn_search import KnnSearch

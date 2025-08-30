@@ -1,12 +1,12 @@
 from abc import ABC, abstractmethod
 from typing import final, Dict, Any, List
 
-from ddxdriver.benchmarks import Bench
-from ddxdriver.diagnosis_agents import Diagnosis
-from ddxdriver.history_taking_agents import HistoryTaking
-from ddxdriver.patient_agents import PatientAgent
-from ddxdriver.rag_agents import RAG
-from ddxdriver.utils import (
+from meddxagent.ddxdriver.benchmarks import Bench
+from meddxagent.ddxdriver.diagnosis_agents import Diagnosis
+from meddxagent.ddxdriver.history_taking_agents import HistoryTaking
+from meddxagent.ddxdriver.patient_agents import PatientAgent
+from meddxagent.ddxdriver.rag_agents import RAG
+from meddxagent.ddxdriver.utils import (
     DialogueHistory,
     Patient,
     OutputDict,
@@ -14,7 +14,7 @@ from ddxdriver.utils import (
     ddx_list_to_string,
     Constants,
 )
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.logger import log
 
 
 "The ddxdriver, which can be a simple llm, or an autogen with conversable agent wrappers which call code"

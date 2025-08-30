@@ -5,7 +5,7 @@ from openai import OpenAI
 
 from .base import Model
 from .utils import get_chat_messages, retry_with_exponential_backoff
-from ddxdriver.logger import log
+from meddxagent.ddxdriver.logger import log
 
 
 class Llama3Instruct(Model):
