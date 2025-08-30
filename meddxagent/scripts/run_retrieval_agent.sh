@@ -37,6 +37,7 @@ echo "Experiment folder: ${EXPERIMENT_FOLDER}"
 # Determine MIRIAD root directory
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.."
 export PYTHONPATH="${ROOT_DIR}:${PYTHONPATH}"
+echo "Root dir: ${ROOT_DIR}"
 
 python -m meddxagent.scripts.experiment \
     --experiment_type rag \

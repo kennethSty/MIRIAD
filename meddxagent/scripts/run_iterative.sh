@@ -5,7 +5,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Default configuration options (no environment variable dependencies)
 NUM_PATIENTS=100
-MODEL_NAME="gpt-4o"
+MODEL_NAME="meta-llama/Meta-Llama-3.1-8B-Instruct"
 
 # Parse command line arguments
 while [[ $# -gt 0 ]]; do
@@ -33,4 +33,12 @@ echo "Number of patients: ${NUM_PATIENTS}"
 echo "Model name: ${MODEL_NAME}"
 echo "Experiment folder: ${EXPERIMENT_FOLDER}"
 
-cd "${SCRIPT_DIR}" && python experiment.py --experiment_type iterative --experiment_folder "${EXPERIMENT_FOLDER}" --num_patients "${NUM_PATIENTS}" 
+# Determine MIRIAD root directory
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.."
+export PYTHONPATH="${ROOT_DIR}:${PYTHONPATH}"
+echo "Root dir: ${ROOT_DIR}"
+
+python -m meddxagent.scripts.experiment \
+	--experiment_type iterative \
+	--experiment_folder "${EXPERIMENT_FOLDER}" \
+       	--num_patients "${NUM_PATIENTS}" 

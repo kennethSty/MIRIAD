@@ -13,7 +13,7 @@ from meddxagent.ddxdriver.rag_agents._searchrag_utils import Corpus
 
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent  # Adjust as needed
-print(f"Project root is: {PROJECT_ROOT}")
+print(f"MeDDxAgent root is: {PROJECT_ROOT}")
 
 # All available models
 # Select which models to run (modify this list based on which GPU/machine you're using)
@@ -105,7 +105,6 @@ def diagnosis_experiment(diagnosis_experiment_folder: Union[str, Path]):
             "self_generated_fewshot_cot": True,
         },
     ]
-
     num_combinations = len(list(itertools.product(diagnosis_agents, datasets, models)))
 
     # Defining ddxdriver_cfg (model won't be used)
@@ -336,7 +335,7 @@ def history_taking_experiment(history_taking_experiment_folder: Union[str, Path]
                 "diagnosis_cfg": diagnosis_cfg,
             }
             log_json_data(json_data=json_data, file_path=experiment_folder / "configs.json")
-
+            
             # Run example
             run_ddxdriver(
                 bench_cfg=bench_cfg,
@@ -381,8 +380,8 @@ def rag_experiment(rag_experiment_folder: Union[str, Path]):
 
     # Corpus name: PubMed and Wikipedia
     corpus_names = [Corpus.PUBMED.value, Corpus.WIKIPEDIA.value]
-    num_rag_stratgegies = 2 # Miriad and Search    
-    num_combinations = num_rag_stratgegies * len(list(itertools.product(models, datasets, corpus_names)))
+    num_rag_strategies = 2 # Miriad and Search    
+    num_combinations = num_rag_strategies * len(list(itertools.product(models, datasets, corpus_names)))
 
     # Create bench and diagnosis configs
     cfgs = []
@@ -571,12 +570,13 @@ def iterative_experiment(iterative_experiment_folder: Union[str, Path]):
             "class_name": "fixed_choice.FixedChoice",
             "agents": ["history_taking", "rag", "diagnosis"],
         },
-        {"class_name": "open_choice.OpenChoice", "agents": ["history_taking", "rag", "diagnosis"]},
+        #{"class_name": "open_choice.OpenChoice", "agents": ["history_taking", "rag", "diagnosis"]},
     ]
 
-    iterations_list = [1, 2, 3]
-
-    num_combinations = len(list(itertools.product(iterations_list, ddxdrivers, datasets, models)))
+    iterations_list = [3]
+    num_rag_strategies = 2
+    corpus_names = [Corpus.PUBMED.value, Corpus.WIKIPEDIA.value]
+    num_combinations = num_rag_strategies * len(list(itertools.product(iterations_list, corpus_names, ddxdrivers, datasets, models)))
 
     # Running data to determine whether to precompute new embeddings
     covered_embeddings: List[str] = []
@@ -584,8 +584,8 @@ def iterative_experiment(iterative_experiment_folder: Union[str, Path]):
 
     # Create bench and diagnosis_cfg configs
     cfgs = []
-    for iterations, ddxdriver, dataset, model in itertools.product(
-        iterations_list, ddxdrivers, datasets, models
+    for iterations, ddxdriver, dataset, model, corpus_name in itertools.product(
+        iterations_list, ddxdrivers, datasets, models, corpus_names
     ):
         try:
             # Define agents, which are fixed besides the model they use
@@ -623,11 +623,42 @@ def iterative_experiment(iterative_experiment_folder: Union[str, Path]):
                 "class_name": f"meddxagent.ddxdriver.models.{model['class_name']}",
                 "config": {"model_name": model["model_name"]},
             }
+            
+            miriad_rag_cfg = {
+                "class_name": "meddxagent.ddxdriver.rag_agents.miriad_rag.MiriadRAG",
+                "config": {
+                    "embedding": {
+                        "model_names": [
+                            "BAAI/bge-large-en-v1.5",
+                            "sentence-transformers/all-MiniLM-L6-v2"
+                        ],
+                        "contents": ["qa"],
+                        "emb_model_name": "BAAI/bge-large-en-v1.5",
+                        "content": "qa"
+                        },
+                    "model": {
+                        "class_name": "meddxagent.ddxdriver.models.llama31_8b.Llama318B",
+                        "config": {
+                            "model_name": "meta-llama/Meta-Llama-3.1-8B-Instruct"
+                        }
+                    },
+                    "qdrant": {
+                        "host": "localhost",
+                        "port": 6333,
+                        "collection": "miriad_{emb_model_name}_{content}"
+                    },
+                    "retrieval": {
+                        "top_k_search": 2,
+                        "max_question_searches": 3
+                    }
+                }
+            }
 
-            rag_cfg = {
+
+            search_rag_cfg = {
                 "class_name": "meddxagent.ddxdriver.rag_agents.searchrag_standard.SearchRAGStandard",
                 "config": {
-                    "corpus_name": "PubMed",
+                    "corpus_name": corpus_name,
                     "top_k_search": 2,
                     "max_keyword_searches": 3,
                     "model": {
@@ -636,6 +667,7 @@ def iterative_experiment(iterative_experiment_folder: Union[str, Path]):
                     },
                 },
             }
+
 
             if embedding_model and embedding_model not in covered_embeddings:
                 covered_embeddings.append(embedding_model)
@@ -670,14 +702,18 @@ def iterative_experiment(iterative_experiment_folder: Union[str, Path]):
                 ddxdriver_cfg["config"]["iterations"] = iterations
             elif ddxdriver["class_name"] == "open_choice.OpenChoice":
                 ddxdriver_cfg["config"]["available_agents"] = ["history_taking", "rag", "diagnosis"]
-                ddxdriver_cfg["config"]["max_turns"] = iterations * 3
+                num_agents_per_cycle = 3
+                ddxdriver_cfg["config"]["max_turns"] = iterations * num_agents_per_cycle 
             else:
                 raise ValueError(
                     "DDxDriver class name is invalid, should be either fixed_choice.FixedChoice or open_choice.OpenChoice"
                 )
 
             cfgs.append(
-                (ddxdriver_cfg, diagnosis_cfg, history_taking_cfg, patient_cfg, rag_cfg, bench_cfg)
+                (ddxdriver_cfg, diagnosis_cfg, history_taking_cfg, patient_cfg, miriad_rag_cfg, bench_cfg)
+            )
+            cfgs.append(
+                (ddxdriver_cfg, diagnosis_cfg, history_taking_cfg, patient_cfg, search_rag_cfg, bench_cfg)
             )
         except Exception as e:
             tb = traceback.format_exc()
