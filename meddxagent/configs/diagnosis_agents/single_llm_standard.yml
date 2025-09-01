@@ -1,11 +1,15 @@
-class_name: "ddxdriver.diagnosis_agents.single_llm_standard.SingleLLMStandard" 
+class_name: "meddxagent.ddxdriver.diagnosis_agents.single_llm_standard.SingleLLMStandard" 
 config:
   # Model hyperparameters
   model:
-    class_name: ddxdriver.models.llama31_8b.Llama318B  #["oai_azure_chat.OpenAIAzureChat", "oai_chat.OpenAIChat", "llama3_instruct.Llama3Instruct", "llama31_8b.Llama318B"]
+    class_name: meddxagent.ddxdriver.models.llama31_8b.Llama318B  #["oai_azure_chat.OpenAIAzureChat", "oai_chat.OpenAIChat", "llama3_instruct.Llama3Instruct", "llama31_8b.Llama318B"]
     config:
       model_name: "meta-llama/Meta-Llama-3.1-8B-Instruct"  # ["gpt-4o", "llama31instruct", "meta-llama/Meta-Llama-3.1-8B-Instruct"]
-      
+  # Fewshot config controls if and how many example patient cases 
+  # are provided to the diagnosis agent when making its diagnosis decision.
+  # Settings:
+  #   - Dynamic: select num_shots based on highest similarity score
+  #   - Static: sflect num_shots random      
   fewshot:
     type: "dynamic"                   # ["dynamic", "static", "none"]
     num_shots: 5

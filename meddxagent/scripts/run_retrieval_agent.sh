@@ -39,7 +39,7 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.."
 export PYTHONPATH="${ROOT_DIR}:${PYTHONPATH}"
 echo "Root dir: ${ROOT_DIR}"
 
-python -m meddxagent.scripts.experiment \
+python -m meddxagent.evaluation.experiment \
     --experiment_type rag \
     --experiment_folder "${EXPERIMENT_FOLDER}" \
     --num_patients "${NUM_PATIENTS}"

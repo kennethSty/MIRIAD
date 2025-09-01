@@ -15,8 +15,10 @@ class Constants(Enum):
 
 class Agents(Enum):
     HISTORY_TAKING = "history_taking"
-    RAG = "rag"
+    PATIENT = "patient"
+    DRIVER = "ddxdriver"
     DIAGNOSIS = "diagnosis"
+    RAG = "rag"
     MIRIAD_RAG = "miriad_rag"
     SEARCH_RAG = "search_rag"
 

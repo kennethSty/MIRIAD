@@ -1,10 +1,8 @@
 from Bio import Entrez
 import requests
-from bs4 import BeautifulSoup
 from enum import Enum
 from typing import List, Dict
 
-from meddxagent.ddxdriver.utils import strip_all_lines
 from meddxagent.ddxdriver.logger import log
 
 ADDED_EXTRA = 10

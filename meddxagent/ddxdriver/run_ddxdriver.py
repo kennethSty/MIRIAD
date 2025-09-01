@@ -1,9 +1,9 @@
 from argparse import ArgumentParser, Namespace
 from pathlib import Path
-from typing import List, Dict, Tuple, Any, Union
+from typing import List, Union
+from multiprocess import sys
 import yaml
 import random
-from datasets import Dataset
 from copy import deepcopy
 import traceback
 
@@ -275,7 +275,7 @@ if __name__ == "__main__":
         patient_agent_cfg = yaml.safe_load(args.patient_agent_cfg.read_text())
         rag_agent_cfg = yaml.safe_load(args.rag_agent_cfg.read_text())
     except Exception as e:
-        raise Exception(f"Error setting up config files:\n{e}")
+        raise Exception(f"Error setting up config files:\n{e} \n current_dir: {Path.cwd()}")
 
     run_ddxdriver(
         bench_cfg=bench_cfg,

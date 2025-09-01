@@ -1,9 +1,7 @@
-class_name: ddxdriver.rag_agents.miriad_rag.MiriadRAG
+class_name: meddxagent.ddxdriver.rag_agents.miriad_rag.MiriadRAG
 
 config:
   # Embedding Configuration
-  top_k_search: 2
-  max_keyword_searches: 3
   embedding:
     model_names: ['BAAI/bge-large-en-v1.5','sentence-transformers/all-MiniLM-L6-v2']
     contents: ['qa'] #['qa', 'passage_text'] #'passage_text', 'qa', 'question'
@@ -13,7 +11,7 @@ config:
 
   # Model hyperparameters
   model:
-    class_name: ddxdriver.models.llama31_8b.Llama318B   
+    class_name: meddxagent.ddxdriver.models.llama31_8b.Llama318B   
     config:
       model_name: "meta-llama/Meta-Llama-3.1-8B-Instruct"  # ["gpt-4o", "llama31instruct", "meta-llama/Meta-Llama-3.1-8B-Instruct"]
 
@@ -22,3 +20,7 @@ config:
     host: 'localhost'
     port: 6333 # e.g., 6333 for Qdrant
     collection: 'miriad_{emb_model_name}_{content}'
+
+  retrieval:
+    top_k_search: 2
+    max_keyword_searches: 3
