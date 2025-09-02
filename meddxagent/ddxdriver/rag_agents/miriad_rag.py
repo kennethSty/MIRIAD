@@ -74,17 +74,20 @@ class MiriadRAG(RAGBase):
         """
         retry_counter = 0
         log.info("Start generating questions to guide later retrieval...")
-        user_prompt = get_create_questions_user_prompt(
-            input_search=input_search, max_question_searches=self.max_question_searches
+        question_response = self.model(user_prompt=input_search)
+        log.info(f"Created questions (raw): {question_response}") 
+        extract_questions_prompt = get_create_questions_user_prompt(
+            input_search=question_response, max_question_searches=self.max_question_searches
         )
-        log.info(f"Prompt to extract parsable list of questions: {user_prompt}")
+        log.info(f"Prompt to extract parsable list of questions: {extract_questions_prompt}")
 
         questions = []
         message_history = []
+        questions_str = ""
         while retry_counter <= Constants.RAG_RETRIES.value:
             try:
                 questions_str = self.model(
-                    user_prompt=user_prompt, message_history=message_history
+                    user_prompt=extract_questions_prompt, message_history=message_history
                 )
                 questions = extract_and_eval_list(string=questions_str)
                 questions = questions[:self.max_question_searches]
@@ -96,19 +99,19 @@ class MiriadRAG(RAGBase):
                 if retry_counter <= Constants.RAG_RETRIES.value:
                     log.info(f"Current questions list: {questions_str}, trying again...\n")
                 else:
-                    log.info(f"Out of retries for questions, returning '' for rag content...\n")
-                    return ""
+                    log.info(f"Out of retries for questions, returning empty list...\n")
+                    return []
             if questions and all(isinstance(x, str) for x in questions):
                 break
 
             retry_counter+=1
             message_history.extend(
                 [
-                    {"role": "user", "content": user_prompt},
-                    {"role": "assistant", "content": keyword_searches_str},
+                    {"role": "user", "content": extract_questions_prompt},
+                    {"role": "assistant", "content": questions_str},
                 ]
             )
-            user_prompt = (
+            extract_questions_prompt = (
                 "Your question list was not formatted correctly as a list of strings. "
                 "Please edit its format so it can be parsed as such.\n"
                 "Here is an example of formatting (replace the placeholders inside the arrow brackets, and do not include the arrow brackets themselves):\n"
