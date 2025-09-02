@@ -146,16 +146,15 @@ def get_agent_description(
 
     if agent_type == Agents.MIRIAD_RAG.value:
         # Function: retrieves answers to clinical questions relevant for differential diagnosis
-        agent_function = "This agent formulates questions about relevant disease information (symptoms, antecedents) from an external database to help create/edit the differential diagnosis of the patient."
+        agent_function = "This agent formulates questions about relevant disease information (symptoms, antecedents) from an external database to help create/edit the differential diagnosis of the patient. It is only supposed create but not answer these questions."
 
         # Prompt: instructs the agent to formulate the questions
         agent_prompt = (
             f"Provide a detailed yet concise list of at maximum {agent_prompt_length} clinically relevant questions about the diseases that the patient may suffer from.\n"
-            "These questions should be aimed at symptoms, antecedents, risk factors, or other information which can assist in creating an differential diagnoses based on their answers.\n"
+            "These questions should be aimed at symptoms, antecedents, risk factors, or other information that can be looked up in the suitable literature in order assist in creating the correct differential diagnoses.\n"
             "Do not include questions about treatments, diagnostic procedures or details that only the patient could answer.\n"
             "Do not include questions that were already answered by previous RAG content. \n"
-            "You should also provide a free text instruction of how you want the agent to respond.\n"
-            "Do not answer the questions.\n"
+            "Do not answer the questions yourself.\n"
             "Limit your response to length of a short paragraph or two, which may include a short list.\n"
         )
 

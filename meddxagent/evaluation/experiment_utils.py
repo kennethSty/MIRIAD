@@ -156,7 +156,8 @@ def get_diagnosis_cfg(
     model_class_name: str,
     fewshot_type = "none",
     fewshot_num_shots = 0,
-    diagnosis_agent_type = "single_llm_standard.SingleLLMStandard" 
+    diagnosis_agent_type = "single_llm_standard.SingleLLMStandard",
+    fewshot_embedding_model = "BAAI/bge-base-en-v1.5",
     ) -> Dict:
     return {
         "class_name": f"meddxagent.ddxdriver.diagnosis_agents.{diagnosis_agent_type}",
@@ -165,7 +166,11 @@ def get_diagnosis_cfg(
                 "class_name": f"meddxagent.ddxdriver.models.{model_class_name}",
                 "config": {"model_name": model_name},
             },
-            "fewshot": {"type": fewshot_type, "num_shots": fewshot_num_shots},
+            "fewshot": {
+                "type": fewshot_type, 
+                "embedding_model": fewshot_embedding_model,
+                "num_shots": fewshot_num_shots
+            },
         },
     }
 

@@ -111,7 +111,7 @@ def iterative_experiment_meddx(
             # rebuild diagnosis_cfg with overrides
             diagnosis_cfg = get_diagnosis_cfg(
                 model_name=model_cfg["config"]["model_name"],
-                model_class_name=model_cfg["class_name"].split(".")[-1],
+                model_class_name=".".join(model_cfg["class_name"].split(".")[-2:]),
                 **diag_overrides,
             )
 
