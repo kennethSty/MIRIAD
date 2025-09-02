@@ -63,7 +63,7 @@ def iterative_experiment(
         experiment_base_cfg=experiment_base_cfg
     )
 
-    log.info("Starting to run entire history taking experiment...\n")
+    log.info("Starting to run entire iterative experiment...\n")
     for experiment_number, (
         bench_cfg,
         ddxdriver_cfg,

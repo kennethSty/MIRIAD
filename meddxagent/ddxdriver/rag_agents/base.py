@@ -16,14 +16,15 @@ class RAG(ABC):
         self,
         input_search: str,
         diagnosis_options: List[str] = [],
-    ) -> str:
+    ) -> Dict:
         """
         Retrieves relevant documents given the input text, then returns content from the output (an "answer")
         Params:
             input_search (str): Full search of information the doctor wants (can be formatted in free text)
 
         Output:
-            (str) Text answering the doctor's input search
+            (Dict) with key OutputDict.RAG_CONTENT and text answering 
+            the doctor's input search as a value
         """
         raise NotImplementedError
     

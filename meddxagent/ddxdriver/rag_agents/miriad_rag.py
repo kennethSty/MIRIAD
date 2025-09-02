@@ -67,6 +67,11 @@ class MiriadRAG(RAGBase):
         return {OutputDict.RAG_CONTENT: output}
             
     def get_questions(self, input_search: str) -> List[str]: 
+        """
+        Given an input search formualted by the ddxdriver which contains relevant questions 
+        whose answer would help to obtain the correct diagnosis for the patient, 
+        extracts these questions into a list.
+        """
         retry_counter = 0
         log.info("Start generating questions to guide later retrieval...")
         user_prompt = get_create_questions_user_prompt(
@@ -117,6 +122,10 @@ class MiriadRAG(RAGBase):
         return questions
 
     def retrieve_documents(self, questions: List[str]):
+        """
+        Given a list of questions, uses retrieves the relevant self.top_k_search documents
+        from the Miriad Qdrant knowledge base.
+        """
         retrieval_results = []
         for question in questions:
             log.info(f"Retrieving documents for question: {question}")

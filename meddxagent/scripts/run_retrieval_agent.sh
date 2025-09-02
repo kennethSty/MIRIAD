@@ -39,6 +39,10 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)/.."
 export PYTHONPATH="${ROOT_DIR}:${PYTHONPATH}"
 echo "Root dir: ${ROOT_DIR}"
 
+# Optional: Set which devises to use 
+export CUDA_VISIBLE_DEVICES=4,5,6,7
+echo "Using GPUs: ${CUDA_VISIBLE_DEVICES}"
+
 python -m meddxagent.evaluation.experiment \
     --experiment_type rag \
     --experiment_folder "${EXPERIMENT_FOLDER}" \

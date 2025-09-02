@@ -131,7 +131,6 @@ class FixedChoice(DDxDriver):
                 agent_type=rag_type,
                 rag_search_length=rag_search_length
             )
-            log.info("Input search for RAG:\n" + input_search + "\n")
             return self.rag_agent(
                 input_search=input_search, diagnosis_options=self.bench.diagnosis_options
             )
@@ -175,7 +174,8 @@ class FixedChoice(DDxDriver):
             diagnosis_options=self.bench.diagnosis_options,
             agent_instruction_length=agent_prompt_length,
         )
-        # log.info("Fixed Choice DDxDriver User prompt:\n" + user_prompt + "\n\n")
+        log.info(f"Driver is pompted with system prompt: {system_prompt}")
+        log.info(f"Driver is pompted with  prompt: {prompt_to_driver}")
         log.info(f"Driver creates prompt for {agent_type} agent\n")
         agent_prompt = self.model(user_prompt=prompt_to_driver, system_prompt=system_prompt)
         log.info(f"Driver created prompt: {agent_prompt}\n")

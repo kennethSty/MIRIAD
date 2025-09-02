@@ -8,7 +8,7 @@ from pathlib import Path
 #rag_pipeline_path = current_dir.parent.parent.parent / "rag_pipeline"
 #sys.path.insert(0, str(rag_pipeline_path / "src"))
 from rag_pipeline.src.rag import RAG
-
+from meddxagent.ddxdriver.logger import log
 
 class MiriadRetriever:
     """Retriever that uses the MIRIAD RAG pipeline to retrieve relevant documents."""
@@ -38,7 +38,7 @@ class MiriadRetriever:
         collection_name = self.config["qdrant"]["collection"].format(
             emb_model_name=model_name_short, content=content
         )
-
+        log.info(f"Setting up retriever with collection name: {collection_name}")
         return RAG(
             qdrant_host=self.config["qdrant"]["host"],
             qdrant_port=self.config["qdrant"]["port"],

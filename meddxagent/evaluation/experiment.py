@@ -1,7 +1,7 @@
 import yaml
 
 from meddxagent.evaluation.diagnosis_experiment import diagnosis_experiment
-from meddxagent.evaluation.iterative_experiment import iterative_experiment
+from meddxagent.evaluation.iterative_experiment_meddx import iterative_experiment_meddx
 from meddxagent.evaluation.history_taking_experiment import history_taking_experiment
 from meddxagent.evaluation.rag_experiment import rag_experiment
 from meddxagent.evaluation.experiment_utils import MEDDX_ROOT, setup_experiment_cli_parser, get_experiment_paths
@@ -36,7 +36,7 @@ def main():
             )
     
     elif args.experiment_type == "iterative":
-        iterative_experiment(
+        iterative_experiment_meddx(
             experiment_paths["iterative"], 
             experiment_base_cfg
             )
@@ -55,7 +55,7 @@ def main():
             experiment_paths["rag"], 
             experiment_base_cfg
             )
-        iterative_experiment(
+        iterative_experiment_meddx(
             experiment_paths["iterative"], 
             experiment_base_cfg
             )

@@ -43,7 +43,7 @@ class SearchRAGBase(RAG):
         self,
         input_search: str,
         diagnosis_options: List[str] = [],
-    ) -> str:
+    ) -> Dict:
         """
         Given an input search, asks gpt to return a list of keywords to search, then loops through them for results.
         Removes from list if successful. If not, then adds to another list and asks gpt to simplify

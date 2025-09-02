@@ -19,7 +19,7 @@ config:
   qdrant:
     host: 'localhost'
     port: 6333 # e.g., 6333 for Qdrant
-    collection: 'miriad_{emb_model_name}_{content}'
+    collection: 'miriad_{emb_model_name_short}_{content}'
 
   retrieval:
     top_k_search: 2

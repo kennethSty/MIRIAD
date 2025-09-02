@@ -4,7 +4,7 @@ import time
 import yaml 
 from pathlib import Path
 from argparse import ArgumentParser, Namespace
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Tuple
 from meddxagent.ddxdriver.utils import Agents
 from meddxagent.ddxdriver.rag_agents._searchrag_utils import Corpus
 from meddxagent.ddxdriver.run_ddxdriver import run_ddxdriver
@@ -12,6 +12,9 @@ from meddxagent.ddxdriver.logger import log, enable_logging, set_file_handler, l
 MEDDX_ROOT = Path(__file__).resolve().parent.parent
 
 def get_experiment_paths(args: Namespace, experiment_cfg):
+    """
+    Constructs path for storing experiment results
+    """
     active_models = experiment_cfg["active_models"]
     model_name = "_".join(
         m["model_name"].split("/")[-1].lower() for m in active_models
@@ -33,6 +36,7 @@ def get_experiment_paths(args: Namespace, experiment_cfg):
         return base_folders
 
 def setup_experiment_cli_parser() -> ArgumentParser:
+    """ Setsup argument parser for experiment cli arguments """
     parser = ArgumentParser(description="Run MEDDxAgent experiments")
     parser.add_argument(
         "--experiment_type",
@@ -53,7 +57,12 @@ def setup_experiment_cli_parser() -> ArgumentParser:
     return parser
 
 def setup_experiment_dir_and_log(experiment_folder: Union[str, Path]):
+    """
+    Given a path where experiment results should be stored, ensures the directory exists,
+    and sets up logging inside this directory
+    """
     experiment_folder = Path(experiment_folder)
+    experiment_folder.mkdir(parents=True, exist_ok=True)
     experiment_logging_path = experiment_folder / "experiment_logs.log"
     set_file_handler(experiment_logging_path, mode="a")
     enable_logging(console_logging=True, file_logging=True)
@@ -74,35 +83,43 @@ def setup_toggled_variables(
         toggle_top_k_search = False,
         toggle_iterations = False
         ) -> Dict:
+    """ 
+    Centrally manages the different experiment setups.
+    Given boolean inputs for a certain variable, it defines what the values 
+    will be that will get varied for a certain variable.
+    """
+
     variable_dict = {}
     if toggle_models:
         variable_dict["model"] = experiment_base_cfg["active_models"]
     if toggle_datasets:
-        variable_dict["dataset"] = ["ddxplus.DDxPlus", "icraftmd.ICraftMD"]
+        variable_dict["dataset"] = experiment_base_cfg["dataset"]
     if toggle_max_questions:
-        variable_dict["max_questions"] = [5, 10, 15]
+        variable_dict["max_questions"] = experiment_base_cfg["max_questions"]
     if toggle_corpus:
-        variable_dict["corpus_name"] = [Corpus.PUBMED, Corpus.WIKIPEDIA]
+        variable_dict["corpus_name"] = experiment_base_cfg["corpus_name"]
     if toggle_fewshot_type:
-        variable_dict["fewshot_type"] = ["static", "dynamic", "none"]
+        variable_dict["fewshot_type"] = experiment_base_cfg["fewshot_type"]
     if toggle_num_shots:
-        variable_dict["num_shots"] = [0,5]
+        variable_dict["fewshot_num_shots"] = experiment_base_cfg["fewshot_num_shots"]
     if toggle_diagnosis_llm_type:
-        variable_dict["diagnosis_agent_type"] = [
-            "single_llm_cot.SingleLLMCOT", 
-            "single_llm_standard.SingleLLMStandard"
-        ]
+        variable_dict["diagnosis_agent_type"] = experiment_base_cfg["diagnosis_agent_type"]
     if toggle_max_question_searches:
-        variable_dict["max_question_searches"] = [3, 4]
+        variable_dict["max_question_searches"] = experiment_base_cfg["max_question_searches"]
     if toggle_max_keywords:
-        variable_dict["max_keyword_searches"] = [3, 4]
+        variable_dict["max_keyword_searches"] = experiment_base_cfg["max_keyword_searches"]
     if toggle_top_k_search:
-        variable_dict["top_k_search"] = [2, 3]
+        variable_dict["top_k_search"] = experiment_base_cfg["top_k_search"]
     if toggle_iterations:
-        variable_dict["iterations"] = [2, 3]
+        variable_dict["iterations"] = experiment_base_cfg["iterations"]
     return variable_dict
 
 def setup_benchmark_cfg(dataset_name: str, num_patients: int, enforce_diagnosis_options = True) -> Dict:
+    """
+    Loads the config defining the benchmark usage from bench.yml
+    and adds runtime specific variables.
+    """
+
     bench_cfg = yaml.safe_load((MEDDX_ROOT / "configs/bench.yml").read_text())
     bench_cfg["class_name"] = f"meddxagent.ddxdriver.benchmarks.{dataset_name}"
     bench_cfg["num_patients"] = num_patients
@@ -179,6 +196,7 @@ def get_miriad_rag_cfg(
     max_question_searches: int = 3,
     **kwargs
 ) -> dict:
+    emb_model_name_short = emb_model_name.split("/")[-1]
     return {
         "class_name": "meddxagent.ddxdriver.rag_agents.miriad_rag.MiriadRAG",
         "config": {
@@ -198,7 +216,7 @@ def get_miriad_rag_cfg(
             "qdrant": {
                 "host": host,
                 "port": port,
-                "collection": f"miriad_{emb_model_name}_{content}",
+                "collection": f"miriad_{emb_model_name_short}_{content}",
             },
             "retrieval": {
                 "top_k_search": top_k_search,
@@ -208,7 +226,7 @@ def get_miriad_rag_cfg(
     }
 
 def get_search_rag_cfg(
-    corpus_name: Corpus,
+    corpus_name: str,
     model_class_name: str,
     model_name: str,
     top_k_search: int = 2,
@@ -218,7 +236,7 @@ def get_search_rag_cfg(
     return {
         "class_name": "meddxagent.ddxdriver.rag_agents.searchrag_standard.SearchRAGStandard",
         "config": {
-            "corpus_name": corpus_name.value,
+            "corpus_name": corpus_name,
             "top_k_search": top_k_search,
             "max_keyword_searches": max_keyword_searches,
             "model": {
@@ -253,7 +271,14 @@ def setup_experiment_cfgs(
         fixed_diagnosis_kwargs = {},
         fixed_rag_kwargs = {},
         active_agents = {Agents.DRIVER.value, Agents.DIAGNOSIS.value}
-        ) -> List[Dict]:
+        ) -> List[Tuple]:
+
+    """
+    Manages the construction of the different configes used to determine an experiment setting.
+    Returns a list of tuples, where each list item defines the setup of one experiment and each 
+    item of a tuple is a config of either an agent or a benchmark.
+    """
+
     if len(toggled_variables.keys()) != len(variable_order):
         raise ValueError(f"expected {len(toggled_variables.keys())}, got {len(variable_order)}")
     cfgs = []
@@ -304,7 +329,7 @@ def setup_experiment_cfgs(
             if Agents.RAG.value in active_agents:
                 # Search rag uses pubmed or wikipedia, while miriad rag uses only miriad 
                 model = var_values.get("model", experiment_base_cfg["active_models"][0])
-                if var_values.get("corpus_name") == Corpus.MIRIAD:
+                if var_values.get("corpus_name") == Corpus.MIRIAD.value:
                     rag_cfg = get_miriad_rag_cfg(
                         emb_model_name=var_values.get("emb_model_name", "BAAI/bge-large-en-v1.5"),
                         content=var_values.get("content", "qa"),
@@ -343,7 +368,7 @@ def run_single_experiment(
     patient_cfg = None,
     rag_cfg = None,
 ):
-    """Run one experiment iteration with logging and error handling."""
+    """Run one experiment iteration using the setting of the provided configs."""
     set_file_handler(experiment_logging_path, mode="a")
     log.info(f"STARTING EXPERIMENT {experiment_number}...\n")
     start_time = time.time()

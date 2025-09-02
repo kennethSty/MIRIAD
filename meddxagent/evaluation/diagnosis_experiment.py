@@ -37,7 +37,7 @@ def diagnosis_experiment(
 
     cfgs = setup_experiment_cfgs(
         toggled_variables=toggled_variables, 
-        variable_order=["dataset", "model", "num_shots", "fewshot_type", "diagnosis_agent_type"],
+        variable_order=["dataset", "model", "fewshot_num_shots", "fewshot_type", "diagnosis_agent_type"],
         fixed_driver_kwargs = fixed_driver_kwargs,
         active_agents={
             Agents.DRIVER.value,
@@ -46,7 +46,7 @@ def diagnosis_experiment(
         experiment_base_cfg=experiment_base_cfg
     )
 
-    log.info("Starting to run entire history taking experiment...\n")
+    log.info("Starting to run entire diagnosis experiment...\n")
     for experiment_number, (
         bench_cfg,
         ddxdriver_cfg,

@@ -25,7 +25,6 @@ def api_search(
     elif corpus_name == Corpus.MIRIAD.value:
         return _search_miriad(query=query, top_k=top_k)
 
-
 def format_search_result(result):
     """Format a single result into a string."""
     if not all(key in result for key in ["title", "content"]):
