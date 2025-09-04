@@ -1,0 +1,24 @@
+active_models: [
+  {"class_name": "llama31_8b.Llama318B", "model_name": "meta-llama/Meta-Llama-3.1-8B-Instruct"}
+] 
+  # For full experiment fleet choose active_models:
+  # [
+  #    {"class_name": "oai_azure_chat.OpenAIAzureChat", "model_name": "gpt-4o"},
+  #   {"class_name": "oai_chat.OpenAIChat", "model_name": "gpt-4o"},
+  #    {"class_name": "llama3_instruct.Llama3Instruct", "model_name": "llama31instruct"},
+  #    {"class_name": "llama3_ultramedical.Llama370BUltraMedical", 
+  #    "model_name": "Llama-3-70B-UltraMedical"},
+  #    {"class_name": "llama31_8b.Llama318B", "model_name": "meta-llama/Meta-Llama-3.1-8B-Instruct"},
+  #    {"class_name": "llama31_8b.Llama318B", "model_name": "TsinghuaC3I/Llama-3.1-8B-UltraMedical"}
+  # ]
+num_patients: 1
+dataset: ["ddxplus.DDxPlus", "icraftmd.ICraftMD"]
+max_questions: [5, 10, 15]
+corpus_name: ["Miriad", "Wikipedia", "PubMed"]
+fewshot_type: ["static", "dynamic", "none"]
+fewshot_num_shots: [0, 5]
+diagnosis_agent_type: ["single_llm_cot.SingleLLMCOT", "single_llm_standard.SingleLLMStandard"]
+max_question_searches: [3, 4]
+max_keyword_searches: [2, 3]
+top_k_search: [2, 3]
+iterations: [2, 3]

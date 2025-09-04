@@ -58,3 +58,6 @@ ENV/
 **(hide)/
 **trial_run/**
 experiments/
+
+# But keep configs/experiments
+!configs/experiments/
